@@ -4,17 +4,12 @@ use near_contract_standards::fungible_token::metadata::FungibleTokenMetadata;
 #[ext_contract(this_contract)]
 trait Callbacks {
   fn get_metadata_callback(&self) -> FungibleTokenMetadata;
-  fn transfer_callback(&mut self) -> bool;
+  fn get_balance_of_callback(&self) -> String;
+  fn on_transfer(&mut self, owner_id: AccountId, token_contract: AccountId, amount: String) -> bool;
 }
 
-#[ext_contract(first_token)]
-trait FirstToken {
-  fn ft_metadata(&self) -> FungibleTokenMetadata;
-  fn ft_transfer(&self, receiver_id: AccountId, amount: u128) -> bool;
-}
-
-#[ext_contract(second_token)]
-trait SecondToken {
-  fn ft_metadata(&self) -> FungibleTokenMetadata;
-  fn ft_transfer(&self, receiver_id: AccountId, amount: u128) -> bool;
+#[ext_contract(ft)]
+trait FT {
+  fn ft_balance_of(&self, account_id: AccountId) -> String;
+  fn transfer_from(&self, owner_id: AccountId, new_owner_id: AccountId, amount: String) -> Result<(), &'static str>;
 }
