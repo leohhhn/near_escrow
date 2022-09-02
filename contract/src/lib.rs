@@ -1,5 +1,5 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{log, near_bindgen, env, PromiseError, PromiseResult, Promise};
+use near_sdk::{log, near_bindgen, env, PromiseError};
 
 pub mod external;
 pub use crate::external::*;
@@ -25,9 +25,9 @@ impl Default for Contract{
 #[near_bindgen]
 impl Contract {
 
-    pub fn ft_on_transfer(&mut self, sender_id: String, amount: String, memo: Option<String>, msg: String) -> String {
+    pub fn ft_on_transfer(&mut self, _sender_id: String, amount: String, _memo: Option<String>, _msg: String) -> String {
         log!("Called ft_on_transfer {}", env::current_account_id());
-        let escrow_contract = env::current_account_id();
+        let _escrow_contract = env::current_account_id();
         
         // let balance_of_first_token = ft::ext(sender_id.parse().unwrap())
         //         .ft_balance_of(escrow_contract.clone())
@@ -46,12 +46,12 @@ impl Contract {
     }
 
     #[private]
-    pub fn get_balance_of_callback(&self, #[callback_result] call_result: Result<String, PromiseError>) -> Result<String, PromiseError> {
+    pub fn get_balance_of_callback(&self, #[callback_result] call_result: Result<String, PromiseError>) -> String {
         if call_result.is_err() {
             panic!("There was an error contacting My FT contract");
         }
     
-        let balance: String = call_result;
+        let balance: String = call_result.unwrap();
         balance
     }
 }
@@ -63,14 +63,4 @@ impl Contract {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn get_default_greeting() {
-        let contract = Contract::default();
-        // this test did not call set_greeting so should return the default "Hello" greeting
-        assert_eq!(
-            contract.get_greeting(),
-            "Hello".to_string()
-        );
-    }
 }
